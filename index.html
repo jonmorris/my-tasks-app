@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Get Sh*t Done</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000;
+      --white: #fff;
+      --gray-50:  #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+
+      --blue-bg:     #eff6ff;
+      --blue-border: #bfdbfe;
+      --blue-text:   #1e40af;
+      --blue:        #2563eb;
+
+      --teal-bg:     #f0fdfa;
+      --teal-border: #99f6e4;
+      --teal:        #0d9488;
+
+      --amber-bg:     #fffbeb;
+      --amber-border: #fde68a;
+      --amber:        #d97706;
+
+      --green-bg:     #f0fdf4;
+      --green-border: #bbf7d0;
+      --green:        #16a34a;
+
+      --radius: 10px;
+      --radius-sm: 7px;
+      --tab-height: 62px;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* ─── Header ─── */
+    .header {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-200);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 640px;
+      padding: 14px 20px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: var(--gray-900);
+    }
+
+    /* ─── Main scroll area ─── */
+    .main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 76px 20px calc(var(--tab-height) + 24px);
+    }
+
+    /* ─── Tab bar ─── */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--tab-height);
+      background: var(--white);
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      border-top: 1px solid var(--gray-200);
+      z-index: 50;
+    }
+
+    .tab-bar-inner {
+      display: flex;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: color 0.15s;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn .tab-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .tab-btn.active {
+      color: var(--blue);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 0 0 2px 2px;
+    }
+
+    /* ─── Cards ─── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      transition: box-shadow 0.15s;
+    }
+    .card:hover { box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+
+    /* ─── Category badges ─── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .badge-must   { background: #ffeaea; color: #c0000f; }
+    .badge-should { background: #fff4e0; color: #a85e00; }
+    .badge-could  { background: #e6f4ea; color: #1e7e34; }
+
+    /* ─── Form inputs ─── */
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--gray-200);
+      border-radius: 7px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--white);
+      color: var(--gray-900);
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--blue);
+    }
+
+    input[type="text"].error {
+      border-color: #c00;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 72px;
+      line-height: 1.5;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-500);
+      margin-bottom: 7px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    /* ─── Buttons ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .btn-primary  { background: var(--blue); color: var(--white); border-color: var(--blue); }
+    .btn-primary:hover  { background: #1d4ed8; border-color: #1d4ed8; }
+    .btn-outline  { background: var(--white); color: var(--gray-700); border-color: var(--gray-300); }
+    .btn-outline:hover  { border-color: var(--gray-500); color: var(--gray-900); background: var(--gray-50); }
+    .btn-ghost    { background: none; color: var(--gray-500); border-color: transparent; padding: 8px 10px; }
+    .btn-ghost:hover    { color: var(--gray-800); background: var(--gray-100); }
+    .btn-danger   { background: none; color: #c00; border-color: transparent; padding: 8px 10px; }
+    .btn-danger:hover   { background: #fff0f0; }
+    .btn-sm { padding: 7px 12px; font-size: 12px; }
+    .btn-full { width: 100%; }
+
+    /* ─── Category selector ─── */
+    .cat-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .cat-btn {
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--gray-300);
+      background: var(--white);
+      color: var(--gray-500);
+      transition: all 0.15s;
+      letter-spacing: 0.3px;
+      font-family: inherit;
+    }
+
+    .cat-btn:hover { border-color: var(--gray-400); color: var(--gray-700); }
+    .cat-btn.sel-must   { border-color: #c0000f; background: #ffeaea; color: #c0000f; }
+    .cat-btn.sel-should { border-color: #a85e00; background: #fff4e0; color: #a85e00; }
+    .cat-btn.sel-could  { border-color: #1e7e34; background: #e6f4ea; color: #1e7e34; }
+
+    /* ─── Filter buttons ─── */
+    .filter-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-600);
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .filter-btn:hover { border-color: var(--gray-400); color: var(--gray-800); }
+    .filter-btn.active { border-color: var(--blue); background: var(--blue); color: var(--white); }
+
+    /* ─── Task row layout ─── */
+    .task-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .task-info { flex: 1; min-width: 0; }
+
+    .task-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 3px;
+    }
+
+    .task-desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-bottom: 7px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ─── Subtask list in card ─── */
+    .subtask-preview {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .subtask-preview-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-400);
+      margin-bottom: 5px;
+    }
+
+    .subtask-preview-item {
+      font-size: 12px;
+      color: var(--gray-600);
+      padding: 2px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .subtask-preview-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gray-300);
+      flex-shrink: 0;
+    }
+
+    /* ─── Add form card ─── */
+    .add-form-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 22px 20px;
+      margin-bottom: 20px;
+    }
+
+    .add-form-header {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-400);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* ─── Subtask input/list in form ─── */
+    .subtask-add-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .subtask-add-row input { flex: 1; }
+
+    .subtask-edit-list { margin-bottom: 8px; }
+
+    .subtask-edit-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .subtask-edit-item:last-child { border-bottom: none; }
+
+    .subtask-edit-item-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--gray-700);
+    }
+
+    /* ─── Focus tab sections ─── */
+    .focus-section {
+      margin-bottom: 22px;
+    }
+
+    .focus-section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .focus-section-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .focus-section-name {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--gray-500);
+    }
+
+    .focus-empty {
+      background: var(--white);
+      border: 2px dashed var(--gray-200);
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    .focus-empty-text {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-bottom: 3px;
+    }
+
+    .focus-empty-hint {
+      font-size: 11px;
+      color: var(--gray-300);
+    }
+
+    /* ─── Focus task card ─── */
+    .focus-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 20px;
+      transition: opacity 0.4s, box-shadow 0.15s;
+    }
+    .focus-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+
+    .focus-card.completing { opacity: 0.25; pointer-events: none; }
+    .focus-card.done { opacity: 0.55; }
+
+    .focus-card-anchor  { border-left: 3px solid var(--blue);  background: var(--blue-bg); }
+    .focus-card-medium  { border-left: 3px solid var(--teal);  background: var(--teal-bg); }
+    .focus-card-tiny    { border-left: 3px solid var(--amber); background: var(--amber-bg); }
+    .focus-card-cleaning { border-left: 3px solid var(--green); background: var(--green-bg); }
+
+    .focus-task-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .focus-task-body { flex: 1; min-width: 0; }
+
+    .focus-subtask-list {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--gray-100);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .focus-subtask-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 0;
+      transition: opacity 0.4s;
+    }
+
+    .focus-subtask-row.completing { opacity: 0.2; pointer-events: none; }
+
+    .focus-subtask-title {
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+
+    .focus-subtask-add {
+      gap: 10px;
+      padding-top: 6px;
+      cursor: pointer;
+    }
+    .focus-subtask-add-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      font-size: 14px;
+      color: var(--gray-400);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .focus-subtask-add-trigger {
+      font-size: 13px;
+      color: var(--gray-400);
+      font-style: italic;
+    }
+    .focus-subtask-add:hover .focus-subtask-add-icon,
+    .focus-subtask-add:hover .focus-subtask-add-trigger {
+      color: var(--gray-600);
+    }
+    .focus-subtask-add-inp {
+      flex: 1;
+      border: none;
+      background: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 11px;
+      color: var(--gray-600);
+      padding: 0;
+      line-height: 1.2;
+    }
+    .focus-subtask-add-inp::placeholder {
+      color: var(--gray-400);
+      font-style: italic;
+    }
+
+    /* ─── Checkbox ─── */
+    .cb {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      border: 2px solid var(--gray-300);
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      background: var(--white);
+    }
+
+    .cb:hover { border-color: var(--blue); }
+    .cb.checked { background: var(--blue); border-color: var(--blue); }
+
+    .cb-sm {
+      width: 17px;
+      height: 17px;
+      border-radius: 3px;
+      border-width: 1.5px;
+    }
+
+    .cb-check {
+      display: none;
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid var(--white);
+      border-bottom: 2px solid var(--white);
+      transform: rotate(-45deg) translateY(-1px);
+    }
+
+    .cb-sm .cb-check {
+      width: 7px;
+      height: 4px;
+    }
+
+    .cb.checked .cb-check { display: block; }
+
+    /* ─── Prioritize focus-assign buttons ─── */
+    .assign-btn {
+      display: block;
+      width: 100%;
+      padding: 16px 18px;
+      margin-bottom: 8px;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      background: var(--white);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .assign-btn:hover { border-color: var(--blue); background: var(--blue-bg); }
+
+    .assign-btn-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-400);
+      margin-bottom: 3px;
+    }
+
+    .assign-btn-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .assign-btn-current {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 3px;
+    }
+
+    .assign-btn-occupied { border-color: var(--gray-300); }
+
+    .remove-focus-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border: 1.5px solid #fdd;
+      border-radius: var(--radius);
+      background: var(--white);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: #c00;
+    }
+
+    .remove-focus-btn:hover { background: #fff5f5; }
+
+    /* ─── Section separator ─── */
+    .section-sep {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 14px;
+    }
+
+    .section-sep-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-400);
+      white-space: nowrap;
+    }
+
+    .section-sep-line {
+      flex: 1;
+      height: 1px;
+      background: var(--gray-200);
+    }
+
+    /* ─── Modal ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.hidden { display: none; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 18px 18px 0 0;
+      padding: 28px 24px 32px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 88vh;
+      overflow-y: auto;
+      animation: slideUp 0.22s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .modal-handle {
+      width: 40px;
+      height: 4px;
+      background: var(--gray-200);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* ─── Empty state ─── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .empty-state-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    .empty-state-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-500);
+      margin-bottom: 4px;
+    }
+
+    .empty-state-hint {
+      font-size: 13px;
+      color: var(--gray-400);
+    }
+
+    /* ─── Divider ─── */
+    .divider {
+      height: 1px;
+      background: var(--gray-200);
+      margin: 18px 0;
+    }
+
+    /* ─── In-focus badge ─── */
+    .in-focus-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--blue);
+      background: var(--blue-bg);
+      border: 1px solid var(--blue-border);
+      border-radius: 20px;
+      padding: 2px 8px;
+    }
+
+    /* ─── Confirm dialog ─── */
+    .confirm-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    /* ─── Utility ─── */
+    .strikethrough { text-decoration: line-through; color: var(--gray-400); }
+    .mt-8 { margin-top: 8px; }
+    .mt-12 { margin-top: 12px; }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+
+    /* ─── Tab bar safe area ─── */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .tab-bar { padding-bottom: env(safe-area-inset-bottom); height: calc(var(--tab-height) + env(safe-area-inset-bottom)); }
+    }
+
+    /* ─── Header data buttons ─── */
+    .header-actions { display: flex; gap: 8px; }
+    .header-btn { padding: 7px 14px; font-size: 13px; font-weight: 500; border-radius: 7px; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .header-btn:hover { border-color: var(--gray-400); color: var(--gray-900); }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <h1>Get Sh*t Done</h1>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" onclick="exportData()">Export</button>
+        <button class="header-btn" onclick="document.getElementById('import-file').click()">Import</button>
+        <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importData(event)">
+      </div>
+    </div>
+  </header>
+
+  <main class="main" id="main"></main>
+
+  <nav class="tab-bar">
+    <div class="tab-bar-inner">
+      <button class="tab-btn active" id="tab-focus"      onclick="switchTab('focus')">
+        <span class="tab-icon">◎</span>Focus
+      </button>
+      <button class="tab-btn"        id="tab-prioritize" onclick="switchTab('prioritize')">
+        <span class="tab-icon">◈</span>Prioritize
+      </button>
+      <button class="tab-btn"        id="tab-braindump"  onclick="switchTab('braindump')">
+        <span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-1.97-3.7 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.44-3.52A2.5 2.5 0 0 1 9.5 2"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 1.97-3.7 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.44-3.52A2.5 2.5 0 0 0 14.5 2"/></svg></span>Brain Dump
+      </button>
+    </div>
+  </nav>
+
+  <div class="modal-overlay hidden" id="modal-overlay" onclick="onOverlayClick(event)">
+    <div class="modal" id="modal-body">
+      <div class="modal-handle"></div>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let state = {
+  tasks: [],
+  currentTab: 'focus',
+  bdFilter: { cat: 'all', q: '' },
+  prFilter: { cat: 'all', q: '' },
+  addingSubtaskFor: null, // task id of the focus card whose quick-add input is open
+};
+
+// Ephemeral form state (never persisted)
+let addForm = { title: '', desc: '', cat: '', subtasks: [], stInput: '' };
+let editForm = null; // { id, title, desc, cat, subtasks, stInput }
+
+// ═══════════════════════════════════════════════
+//  PERSISTENCE
+// ═══════════════════════════════════════════════
+function load() {
+  try {
+    const raw = localStorage.getItem('mytasks_v2');
+    if (raw) { const d = JSON.parse(raw); state.tasks = d.tasks || []; }
+  } catch(_) {}
+}
+
+function save() {
+  try { localStorage.setItem('mytasks_v2', JSON.stringify({ tasks: state.tasks })); } catch(_) {}
+}
+
+function exportData() {
+  const data = localStorage.getItem('mytasks_v2') || JSON.stringify({ tasks: [] });
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'get-shit-done-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data || !Array.isArray(data.tasks)) throw new Error('bad format');
+      if (!confirm('Import ' + data.tasks.length + ' tasks? This will replace your current data.')) return;
+      localStorage.setItem('mytasks_v2', JSON.stringify(data));
+      state.tasks = data.tasks;
+      render();
+      alert('Imported successfully.');
+    } catch(err) {
+      alert('Could not import: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ═══════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function catClass(cat) {
+  return cat === 'must-do' ? 'badge-must' : cat === 'should-do' ? 'badge-should' : 'badge-could';
+}
+
+function catLabel(cat) {
+  return cat === 'must-do' ? 'Must Do' : cat === 'should-do' ? 'Should Do' : 'Could Do';
+}
+
+function badge(cat) {
+  return `<span class="badge ${catClass(cat)}">${catLabel(cat)}</span>`;
+}
+
+function sectionLabel(sec) {
+  const map = { anchor: "Today's Anchor Task", medium: 'Medium Task', tiny: 'Tiny Win', cleaning: 'Daily Cleaning' };
+  return map[sec] || sec;
+}
+
+// ═══════════════════════════════════════════════
+//  ROUTING / TABS
+// ═══════════════════════════════════════════════
+function switchTab(tab) {
+  state.currentTab = tab;
+  ['focus','prioritize','braindump'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  });
+  render();
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER DISPATCHER
+// ═══════════════════════════════════════════════
+function render() {
+  const el = document.getElementById('main');
+  const scrollTop = el.scrollTop;
+  if (state.currentTab === 'focus')      el.innerHTML = renderFocus();
+  else if (state.currentTab === 'prioritize') el.innerHTML = renderPrioritize();
+  else                                   el.innerHTML = renderBrainDump();
+  el.scrollTop = scrollTop;
+}
+
+// ═══════════════════════════════════════════════
+//  BRAIN DUMP TAB
+// ═══════════════════════════════════════════════
+function renderBrainDump() {
+  const f = state.bdFilter;
+  let tasks = [...state.tasks];
+  if (f.cat !== 'all') tasks = tasks.filter(t => t.cat === f.cat);
+  if (f.q) tasks = tasks.filter(t => t.title.toLowerCase().includes(f.q.toLowerCase()));
+
+  return `
+    ${renderAddForm()}
+    <div class="divider"></div>
+    <div class="form-group">
+      <input type="text" placeholder="Search tasks…" value="${esc(f.q)}"
+        oninput="bdSearch(this.value)" id="bd-search">
+    </div>
+    <div class="filter-row">
+      ${filterBtn('all',       f.cat, 'All',       'bdCat')}
+      ${filterBtn('must-do',   f.cat, 'Must Do',   'bdCat')}
+      ${filterBtn('should-do', f.cat, 'Should Do', 'bdCat')}
+      ${filterBtn('could-do',  f.cat, 'Could Do',  'bdCat')}
+    </div>
+    <div id="bd-list">
+      ${tasks.length === 0
+        ? emptyState('No tasks', f.cat !== 'all' || f.q ? 'Try a different filter' : 'Add your first task above')
+        : tasks.map(t => bdTaskCard(t)).join('')}
+    </div>
+  `;
+}
+
+function filterBtn(val, current, label, handler) {
+  const a = val === current ? 'active' : '';
+  return `<button class="filter-btn ${a}" onclick="${handler}('${val}')">${label}</button>`;
+}
+
+function renderAddForm() {
+  const s = addForm;
+  return `
+    <div class="add-form-card">
+      <div class="add-form-header">
+        <span>+</span> Add Task
+      </div>
+      <div class="form-group">
+        <label class="form-label">Title *</label>
+        <input type="text" id="add-title" placeholder="What needs to be done?" value="${esc(s.title)}"
+          oninput="addForm.title=this.value"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();focusAddDesc()}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <textarea id="add-desc" placeholder="Any details…" oninput="addForm.desc=this.value">${esc(s.desc)}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Priority / Category</label>
+        <div class="cat-buttons">
+          <button class="cat-btn ${s.cat==='must-do'  ?'sel-must':''}"   onclick="setAddCat('must-do')">Must Do</button>
+          <button class="cat-btn ${s.cat==='should-do'?'sel-should':''}" onclick="setAddCat('should-do')">Should Do</button>
+          <button class="cat-btn ${s.cat==='could-do' ?'sel-could':''}"  onclick="setAddCat('could-do')">Could Do</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subtasks</label>
+        ${s.subtasks.length > 0 ? `
+          <div class="subtask-edit-list">
+            ${s.subtasks.map((st,i) => `
+              <div class="subtask-edit-item">
+                <span class="subtask-edit-item-text">— ${esc(st.title)}</span>
+                <button class="btn btn-ghost" style="padding:4px 6px;font-size:13px;color:var(--gray-400)" onclick="removeAddSt(${i})">✕</button>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        <div class="subtask-add-row">
+          <input type="text" id="add-st-input" placeholder="Add a subtask…" value="${esc(s.stInput)}"
+            oninput="addForm.stInput=this.value"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();addAddSt()}">
+          <button class="btn btn-outline btn-sm" onclick="addAddSt()">Add</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="submitAdd()">Add Task</button>
+    </div>
+  `;
+}
+
+function focusAddDesc() {
+  document.getElementById('add-desc') && document.getElementById('add-desc').focus();
+}
+
+function setAddCat(cat) {
+  addForm.cat = addForm.cat === cat ? '' : cat;
+  render();
+  // restore focus to title if just selecting category
+}
+
+function addAddSt() {
+  const el = document.getElementById('add-st-input');
+  const val = (el ? el.value : addForm.stInput).trim();
+  if (!val) return;
+  addForm.subtasks.push({ id: uid(), title: val });
+  addForm.stInput = '';
+  render();
+  setTimeout(() => { const i = document.getElementById('add-st-input'); if(i) i.focus(); }, 0);
+}
+
+function removeAddSt(idx) {
+  addForm.subtasks.splice(idx, 1);
+  render();
+}
+
+function submitAdd() {
+  const titleEl = document.getElementById('add-title');
+  const descEl  = document.getElementById('add-desc');
+  const title = (titleEl ? titleEl.value : addForm.title).trim();
+  const desc  = (descEl  ? descEl.value  : addForm.desc ).trim();
+  if (!title) {
+    if (titleEl) { titleEl.classList.add('error'); titleEl.focus(); }
+    return;
+  }
+  state.tasks.unshift({
+    id: uid(),
+    title,
+    desc,
+    cat: addForm.cat || 'could-do',
+    subtasks: addForm.subtasks.map(st => ({ id: st.id, title: st.title })),
+    focusSection: null,
+    createdAt: Date.now(),
+  });
+  save();
+  addForm = { title: '', desc: '', cat: '', subtasks: [], stInput: '' };
+  render();
+  document.getElementById('main').scrollTop = 0;
+}
+
+function bdTaskCard(task) {
+  const hasSubs = task.subtasks && task.subtasks.length > 0;
+  return `
+    <div class="card">
+      <div class="task-row">
+        <div class="task-info">
+          <div class="task-title">${esc(task.title)}</div>
+          ${task.desc ? `<div class="task-desc">${esc(task.desc)}</div>` : ''}
+          <div class="task-meta">
+            ${badge(task.cat)}
+            ${task.focusSection ? `<span class="in-focus-tag">⚡ ${sectionLabel(task.focusSection)}</span>` : ''}
+          </div>
+        </div>
+        <div class="task-actions">
+          <button class="btn btn-ghost" style="font-size:15px" title="Edit" onclick="openEdit('${task.id}')">✎</button>
+          <button class="btn btn-danger" style="font-size:15px" title="Delete" onclick="confirmDelete('${task.id}')">🗑</button>
+        </div>
+      </div>
+      ${hasSubs ? `
+        <div class="subtask-preview">
+          <div class="subtask-preview-label">${task.subtasks.length} subtask${task.subtasks.length > 1 ? 's' : ''}</div>
+          ${task.subtasks.slice(0,3).map(st => `
+            <div class="subtask-preview-item">
+              <span class="subtask-preview-dot"></span>
+              ${esc(st.title)}
+            </div>
+          `).join('')}
+          ${task.subtasks.length > 3 ? `<div style="font-size:11px;color:var(--gray-400);margin-top:2px">+${task.subtasks.length-3} more</div>` : ''}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function bdSearch(val) {
+  state.bdFilter.q = val;
+  // Only update the task list, preserve search input focus
+  const f = state.bdFilter;
+  let tasks = [...state.tasks];
+  if (f.cat !== 'all') tasks = tasks.filter(t => t.cat === f.cat);
+  if (f.q) tasks = tasks.filter(t => t.title.toLowerCase().includes(f.q.toLowerCase()));
+  const list = document.getElementById('bd-list');
+  if (list) {
+    list.innerHTML = tasks.length === 0
+      ? emptyState('No tasks', f.cat !== 'all' || f.q ? 'Try a different filter' : 'Add your first task above')
+      : tasks.map(t => bdTaskCard(t)).join('');
+  }
+}
+
+function bdCat(val) {
+  state.bdFilter.cat = val;
+  render();
+  setTimeout(() => { const i = document.getElementById('bd-search'); if(i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); }}, 0);
+}
+
+// ═══════════════════════════════════════════════
+//  EDIT MODAL
+// ═══════════════════════════════════════════════
+function openEdit(taskId) {
+  const task = state.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  editForm = {
+    id: task.id,
+    title: task.title,
+    desc: task.desc || '',
+    cat: task.cat,
+    subtasks: task.subtasks.map(st => ({ id: st.id, title: st.title })),
+    stInput: '',
+  };
+  showModal(renderEditModal());
+}
+
+function renderEditModal() {
+  const s = editForm;
+  return `
+    <div class="modal-title">Edit Task</div>
+    <div class="form-group">
+      <label class="form-label">Title *</label>
+      <input type="text" id="edit-title" value="${esc(s.title)}" oninput="editForm.title=this.value">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea id="edit-desc" oninput="editForm.desc=this.value">${esc(s.desc)}</textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Priority / Category</label>
+      <div class="cat-buttons">
+        <button class="cat-btn ${s.cat==='must-do'  ?'sel-must':''}"   onclick="editForm.cat='must-do';refreshEditModal()">Must Do</button>
+        <button class="cat-btn ${s.cat==='should-do'?'sel-should':''}" onclick="editForm.cat='should-do';refreshEditModal()">Should Do</button>
+        <button class="cat-btn ${s.cat==='could-do' ?'sel-could':''}"  onclick="editForm.cat='could-do';refreshEditModal()">Could Do</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Subtasks</label>
+      ${s.subtasks.length > 0 ? `
+        <div class="subtask-edit-list">
+          ${s.subtasks.map((st,i) => `
+            <div class="subtask-edit-item">
+              <span class="subtask-edit-item-text">— ${esc(st.title)}</span>
+              <button class="btn btn-ghost" style="padding:4px 6px;font-size:13px;color:var(--gray-400)" onclick="removeEditSt(${i});refreshEditModal()">✕</button>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+      <div class="subtask-add-row">
+        <input type="text" id="edit-st-input" placeholder="Add a subtask…" value="${esc(s.stInput)}"
+          oninput="editForm.stInput=this.value"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();addEditSt()}">
+        <button class="btn btn-outline btn-sm" onclick="addEditSt()">Add</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:2" onclick="saveEdit()">Save Changes</button>
+    </div>
+  `;
+}
+
+function refreshEditModal() {
+  const titleEl = document.getElementById('edit-title');
+  const descEl  = document.getElementById('edit-desc');
+  if (titleEl) editForm.title = titleEl.value;
+  if (descEl)  editForm.desc  = descEl.value;
+  document.getElementById('modal-content').innerHTML = renderEditModal();
+}
+
+function addEditSt() {
+  const el = document.getElementById('edit-st-input');
+  const val = (el ? el.value : editForm.stInput).trim();
+  if (!val) return;
+  editForm.subtasks.push({ id: uid(), title: val });
+  editForm.stInput = '';
+  refreshEditModal();
+  setTimeout(() => { const i = document.getElementById('edit-st-input'); if(i) i.focus(); }, 0);
+}
+
+function removeEditSt(idx) {
+  editForm.subtasks.splice(idx, 1);
+}
+
+function saveEdit() {
+  const titleEl = document.getElementById('edit-title');
+  const descEl  = document.getElementById('edit-desc');
+  const title = (titleEl ? titleEl.value : editForm.title).trim();
+  const desc  = (descEl  ? descEl.value  : editForm.desc ).trim();
+  if (!title) { if (titleEl) { titleEl.classList.add('error'); titleEl.focus(); } return; }
+  const task = state.tasks.find(t => t.id === editForm.id);
+  if (task) {
+    task.title    = title;
+    task.desc     = desc;
+    task.cat      = editForm.cat;
+    task.subtasks = editForm.subtasks.map(st => ({ id: st.id, title: st.title }));
+  }
+  save();
+  closeModal();
+  render();
+}
+
+// ═══════════════════════════════════════════════
+//  DELETE
+// ═══════════════════════════════════════════════
+function confirmDelete(taskId) {
+  const task = state.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  showModal(`
+    <div class="modal-title">Delete Task?</div>
+    <div class="modal-sub">"${esc(task.title)}" will be permanently removed.</div>
+    <div class="confirm-row">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1;background:#c00;border-color:#c00" onclick="deleteTask('${taskId}')">Delete</button>
+    </div>
+  `);
+}
+
+function deleteTask(taskId) {
+  state.tasks = state.tasks.filter(t => t.id !== taskId);
+  save();
+  closeModal();
+  render();
+}
+
+// ═══════════════════════════════════════════════
+//  PRIORITIZE TAB
+// ═══════════════════════════════════════════════
+function renderPrioritize() {
+  const f = state.prFilter;
+  const sectionOrder = { anchor: 0, medium: 1, tiny: 2, cleaning: 3 };
+  const focusTasks = state.tasks.filter(t => t.focusSection)
+    .sort((a, b) => (sectionOrder[a.focusSection] ?? 9) - (sectionOrder[b.focusSection] ?? 9));
+  const catOrder = { 'must-do': 0, 'should-do': 1, 'could-do': 2 };
+  let queueTasks = state.tasks.filter(t => !t.focusSection);
+  if (f.cat !== 'all') queueTasks = queueTasks.filter(t => t.cat === f.cat);
+  if (f.q) queueTasks = queueTasks.filter(t => t.title.toLowerCase().includes(f.q.toLowerCase()));
+  queueTasks.sort((a, b) => (catOrder[a.cat] ?? 3) - (catOrder[b.cat] ?? 3));
+
+  return `
+    ${focusTasks.length > 0 ? `
+      <div class="section-sep"><span class="section-sep-label">In Focus</span><span class="section-sep-line"></span></div>
+      ${focusTasks.map(t => prTaskCard(t, true)).join('')}
+    ` : ''}
+
+    <div class="section-sep"><span class="section-sep-label">Queue</span><span class="section-sep-line"></span></div>
+    <div class="form-group">
+      <input type="text" placeholder="Search tasks…" value="${esc(f.q)}"
+        oninput="prSearch(this.value)" id="pr-search">
+    </div>
+    <div class="filter-row">
+      ${filterBtn('all',       f.cat, 'All',       'prCat')}
+      ${filterBtn('must-do',   f.cat, 'Must Do',   'prCat')}
+      ${filterBtn('should-do', f.cat, 'Should Do', 'prCat')}
+      ${filterBtn('could-do',  f.cat, 'Could Do',  'prCat')}
+    </div>
+
+    <div id="pr-list">
+      ${queueTasks.length === 0
+        ? emptyState('Queue is empty', focusTasks.length > 0 ? 'All tasks are assigned to Focus' : 'Add tasks in Brain Dump first')
+        : queueTasks.map(t => prTaskCard(t, false)).join('')}
+    </div>
+  `;
+}
+
+function prTaskCard(task, inFocus) {
+  return `
+    <div class="card">
+      <div class="task-row">
+        <div class="task-info">
+          <div class="task-title">${esc(task.title)}</div>
+          ${task.desc ? `<div class="task-desc">${esc(task.desc)}</div>` : ''}
+          <div class="task-meta">
+            ${badge(task.cat)}
+            ${inFocus ? `<span class="in-focus-tag">⚡ ${sectionLabel(task.focusSection)}</span>` : ''}
+          </div>
+        </div>
+        <div class="task-actions">
+          <button class="btn ${inFocus ? 'btn-outline' : 'btn-primary'} btn-sm"
+            onclick="openAssign('${task.id}')">
+            ${inFocus ? 'Move' : '◎ Focus'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function prSearch(val) {
+  state.prFilter.q = val;
+  const f = state.prFilter;
+  let tasks = state.tasks.filter(t => !t.focusSection);
+  if (f.cat !== 'all') tasks = tasks.filter(t => t.cat === f.cat);
+  if (f.q) tasks = tasks.filter(t => t.title.toLowerCase().includes(f.q.toLowerCase()));
+  const list = document.getElementById('pr-list');
+  if (list) {
+    list.innerHTML = tasks.length === 0
+      ? emptyState('No tasks match', 'Try a different filter')
+      : tasks.map(t => prTaskCard(t, false)).join('');
+  }
+}
+
+function prCat(val) {
+  state.prFilter.cat = val;
+  render();
+  setTimeout(() => { const i = document.getElementById('pr-search'); if(i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); }}, 0);
+}
+
+// ═══════════════════════════════════════════════
+//  FOCUS ASSIGN MODAL
+// ═══════════════════════════════════════════════
+const SECTIONS = [
+  { id: 'anchor',  name: "Today's Anchor Task", icon: '⚓' },
+  { id: 'medium',  name: 'Medium Task',         icon: '◈' },
+  { id: 'tiny',    name: 'Tiny Win',            icon: '✦' },
+  { id: 'cleaning', name: 'Daily Cleaning',     icon: '🧹' },
+];
+
+function openAssign(taskId) {
+  const task = state.tasks.find(t => t.id === taskId);
+  if (!task) return;
+
+  const btns = SECTIONS.map(sec => {
+    if (sec.id === 'tiny' || sec.id === 'medium') {
+      const count = state.tasks.filter(t => t.focusSection === sec.id && t.id !== taskId).length;
+      return `
+        <button class="assign-btn" onclick="assignFocus('${taskId}','${sec.id}')">
+          <div class="assign-btn-label">${sec.icon} Section</div>
+          <div class="assign-btn-name">${sec.name}</div>
+          <div class="assign-btn-current">${count > 0 ? `${count} already added` : 'Empty slot'}</div>
+        </button>
+      `;
+    }
+    const occupant = state.tasks.find(t => t.focusSection === sec.id && t.id !== taskId);
+    return `
+      <button class="assign-btn ${occupant ? 'assign-btn-occupied' : ''}" onclick="assignFocus('${taskId}','${sec.id}')">
+        <div class="assign-btn-label">${sec.icon} Section</div>
+        <div class="assign-btn-name">${sec.name}</div>
+        <div class="assign-btn-current">${occupant ? `Replaces: ${esc(occupant.title)}` : 'Empty slot'}</div>
+      </button>
+    `;
+  }).join('');
+
+  const removeBtn = task.focusSection ? `
+    <button class="remove-focus-btn" onclick="removeFocus('${taskId}')">
+      Remove from Focus
+    </button>
+  ` : '';
+
+  showModal(`
+    <div class="modal-title">Add to Focus</div>
+    <div class="modal-sub">Choose a section for <strong>${esc(task.title)}</strong>:</div>
+    ${btns}
+    ${removeBtn}
+    <button class="btn btn-ghost btn-full mt-8" onclick="closeModal()">Cancel</button>
+  `);
+}
+
+function assignFocus(taskId, section) {
+  // Clear any existing task from this section (except tiny wins, which allow multiple)
+  if (section !== 'tiny' && section !== 'medium') {
+    state.tasks.forEach(t => { if (t.focusSection === section && t.id !== taskId) t.focusSection = null; });
+  }
+  const task = state.tasks.find(t => t.id === taskId);
+  if (task) task.focusSection = section;
+  save();
+  closeModal();
+  render();
+}
+
+function removeFocus(taskId) {
+  const task = state.tasks.find(t => t.id === taskId);
+  if (task) task.focusSection = null;
+  save();
+  closeModal();
+  render();
+}
+
+// ═══════════════════════════════════════════════
+//  FOCUS TAB
+// ═══════════════════════════════════════════════
+function renderFocus() {
+  const sections = SECTIONS.map(sec => {
+    const tasks = sec.id === 'tiny' || sec.id === 'medium'
+      ? state.tasks.filter(t => t.focusSection === sec.id)
+      : [state.tasks.find(t => t.focusSection === sec.id)].filter(Boolean);
+
+    return `
+      <div class="focus-section">
+        <div class="focus-section-header">
+          <span class="focus-section-icon">${sec.icon}</span>
+          <span class="focus-section-name">${sec.name}</span>
+        </div>
+        ${tasks.length > 0
+          ? tasks.map(task => renderFocusTask(task, sec)).join('')
+          : `<div class="focus-empty">
+              <div class="focus-empty-text">No task assigned</div>
+              <div class="focus-empty-hint">Pick one in the Prioritize tab</div>
+            </div>`
+        }
+      </div>
+    `;
+  }).join('');
+
+  const hasCompleted = state.tasks.some(t =>
+    t.focusSection && (t.completed || (t.subtasks && t.subtasks.some(st => st.completed)))
+  );
+
+  const clearBtn = hasCompleted ? `
+    <button class="btn btn-outline btn-full" style="margin-top:8px;color:var(--gray-500);border-color:var(--gray-300)"
+      onclick="clearFinished()">Clear Finished Tasks</button>
+  ` : '';
+
+  return sections + clearBtn;
+}
+
+function renderFocusTask(task, sec) {
+  const hasSubs = task.subtasks && task.subtasks.length > 0;
+  const done = !!task.completed;
+  return `
+    <div class="focus-card focus-card-${sec.id} ${done ? 'done' : ''}" id="fc-${task.id}">
+      <div class="focus-task-top">
+        <div class="cb ${done ? 'checked' : ''}" onclick="completeTask('${task.id}')" title="${done ? 'Mark incomplete' : 'Mark complete'}">
+          <div class="cb-check"></div>
+        </div>
+        <div class="focus-task-body">
+          <div class="task-title" style="${done ? 'text-decoration:line-through;color:var(--gray-400)' : ''}">${esc(task.title)}</div>
+          ${task.desc ? `<div class="task-desc" style="margin-top:3px">${esc(task.desc)}</div>` : ''}
+        </div>
+      </div>
+      <div class="focus-subtask-list">
+        ${hasSubs ? task.subtasks.map(st => `
+          <div class="focus-subtask-row" id="fst-${st.id}">
+            <div class="cb cb-sm ${st.completed ? 'checked' : ''}" onclick="completeSubtask('${task.id}','${st.id}')" title="${st.completed ? 'Mark incomplete' : 'Complete subtask'}">
+              <div class="cb-check"></div>
+            </div>
+            <span class="focus-subtask-title" style="${st.completed ? 'text-decoration:line-through;color:var(--gray-400)' : ''}">${esc(st.title)}</span>
+          </div>
+        `).join('') : ''}
+        ${state.addingSubtaskFor === task.id ? `
+          <div class="focus-subtask-row focus-subtask-add" style="cursor:default">
+            <span class="focus-subtask-add-icon">+</span>
+            <input class="focus-subtask-add-inp" type="text" placeholder="Subtask title…"
+              id="qst-${task.id}"
+              onclick="event.stopPropagation()"
+              onblur="cancelAddSubtask('${task.id}')"
+              onkeydown="onAddSubtaskKey(event,'${task.id}',this)">
+          </div>
+        ` : `
+          <div class="focus-subtask-row focus-subtask-add" onclick="startAddSubtask('${task.id}')">
+            <span class="focus-subtask-add-icon">+</span>
+            <span class="focus-subtask-add-trigger">Add subtask</span>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+// ─── Completion logic ───
+function completeTask(taskId) {
+  const task = state.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  task.completed = !task.completed;
+  save();
+  render();
+}
+
+function startAddSubtask(taskId) {
+  state.addingSubtaskFor = taskId;
+  render();
+  setTimeout(() => {
+    const inp = document.getElementById('qst-' + taskId);
+    if (inp) inp.focus();
+  }, 0);
+}
+
+function cancelAddSubtask(taskId) {
+  // Tiny delay so an Enter-keypress submit can fire before blur cancels
+  setTimeout(() => {
+    if (state.addingSubtaskFor === taskId) {
+      state.addingSubtaskFor = null;
+      render();
+    }
+  }, 120);
+}
+
+function onAddSubtaskKey(e, taskId, el) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const title = (el.value || '').trim();
+    if (!title) return;
+    const task = state.tasks.find(t => t.id === taskId);
+    if (!task) return;
+    if (!task.subtasks) task.subtasks = [];
+    task.subtasks.push({ id: uid(), title });
+    save();
+    render();
+    setTimeout(() => {
+      const inp = document.getElementById('qst-' + taskId);
+      if (inp) inp.focus();
+    }, 0);
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    state.addingSubtaskFor = null;
+    render();
+  }
+}
+
+function completeSubtask(taskId, subtaskId) {
+  const task = state.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  const st = task.subtasks.find(s => s.id === subtaskId);
+  if (!st) return;
+  st.completed = !st.completed;
+  save();
+  render();
+}
+
+function clearFinished() {
+  // Delete focus tasks that are fully completed (main task checked)
+  // and remove completed subtasks from remaining focus tasks
+  state.tasks = state.tasks.filter(t => !(t.focusSection && t.completed));
+  state.tasks.forEach(t => {
+    if (t.focusSection && t.subtasks) {
+      t.subtasks = t.subtasks.filter(st => !st.completed);
+    }
+  });
+  save();
+  render();
+}
+
+// ═══════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════
+function showModal(content) {
+  document.getElementById('modal-content').innerHTML = content;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+  editForm = null;
+}
+
+function onOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
+function emptyState(title, hint) {
+  return `
+    <div class="empty-state">
+      <div class="empty-state-icon">○</div>
+      <div class="empty-state-title">${title}</div>
+      <div class="empty-state-hint">${hint}</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+load();
+render();
+</script>
+</body>
+</html>
